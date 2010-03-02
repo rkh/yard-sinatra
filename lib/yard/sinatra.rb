@@ -2,6 +2,12 @@ require "yard"
 
 module YARD
 
+  module Sinatra
+    def self.routes
+      YARD::Handlers::Sinatra::AbstractRouteHandler.routes
+    end
+  end
+
   module CodeObjects
     class RouteObject < MethodObject
       attr_accessor :http_verb, :http_path, :real_name
