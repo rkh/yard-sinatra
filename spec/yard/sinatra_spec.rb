@@ -7,7 +7,7 @@ describe YARD::Sinatra do
   end
 
   it "reads sinatra routes" do
-    YARD::Sinatra.routes.size.should == 6
+    YARD::Sinatra.routes.size.should == 5
   end
 
   it "sets properties correctly" do
