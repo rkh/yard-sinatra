@@ -17,7 +17,12 @@ class ExampleApp < Sinatra::Base
   get "/settings" do
     haml :settings, {}, :settings => settings(current_user)
   end
-  
+
+  # Error 404 Page Not Found
+  not_found do
+    haml :'404'
+  end
+
   put("/settings") { }
   delete("/settings") { }
   post("/settings") { }
