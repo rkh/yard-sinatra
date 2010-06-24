@@ -41,7 +41,6 @@ module YARD
           path = http_path
           path = $1 if path =~ /^"(.*)"$/
           register_route(http_verb, path)
-          register_route('HEAD', path) if http_verb == 'GET'
         end
 
         def register_route(verb, path, doc = nil)
