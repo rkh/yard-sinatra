@@ -37,6 +37,11 @@ Add comments to your routes (well, that's optional):
       get "/settings" do
         haml :settings, {}, :settings => settings(current_user)
       end
+      
+      # Error 404 Page Not Found
+      not_found do
+        haml :'404'
+      end
     
     end
 
