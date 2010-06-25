@@ -117,7 +117,7 @@ module YARD
       module Legacy
         class RouteHandler < Ruby::Legacy::Base
           include AbstractRouteHandler
-          handles /\A(get|post|put|delete|head)[\s\(].*/m
+          handles /\A(get|post|put|delete|head|not_found)[\s\(].*/m
 
           def http_verb
             statement.tokens.first.text.upcase
