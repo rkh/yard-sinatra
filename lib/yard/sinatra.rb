@@ -6,6 +6,10 @@ module YARD
     def self.routes
       YARD::Handlers::Sinatra::AbstractRouteHandler.routes
     end
+
+    def self.error_handlers
+      YARD::Handlers::Sinatra::AbstractRouteHandler.error_handlers
+    end
   end
 
   module CodeObjects
@@ -37,11 +41,19 @@ module YARD
           @routes ||= []
         end
 
+        def self.error_handlers
+          @error_handlers ||= []
+        end
+
         def process
-          path = http_path
-          path = $1 if path =~ /^"(.*)"$/
-          register_route(http_verb, path)
-          register_route('HEAD', path) if http_verb == 'GET'
+          case http_verb
+          when 'NOT_FOUND'
+            register_error_handler(http_verb)
+          else
+            path = http_path
+            path = $1 if path =~ /^"(.*)"$/
+            register_route(http_verb, path)
+          end
         end
 
         def register_route(verb, path, doc = nil)
@@ -63,6 +75,22 @@ module YARD
           AbstractRouteHandler.routes << route
           yield(route) if block_given?
         end
+
+        def register_error_handler(verb, doc = nil)
+          error_handler = register CodeObjects::RouteObject.new(namespace, verb, :instance) do |o|
+            o.visibility = "public"
+            o.source     = statement.source
+            o.signature  = verb
+            o.explicit   = true
+            o.scope      = scope
+            o.docstring  = statement.comments
+            o.http_verb  = verb
+            o.real_name  = verb
+            o.add_file(parser.file, statement.line)
+          end
+          AbstractRouteHandler.error_handlers << error_handler
+          yield(error_handler) if block_given?
+        end
       end
 
       # Route handler for YARD's source parser.
@@ -74,6 +102,7 @@ module YARD
         handles method_call(:put)
         handles method_call(:delete)
         handles method_call(:head)
+        handles method_call(:not_found)
 
         def http_verb
           statement.method_name(true).to_s.upcase
