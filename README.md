@@ -62,3 +62,10 @@ For instance, you might want a list of all routes defined in a given list of fil
     YARD::Sinatra.routes.each do |route|
       puts route.http_verb, route.http_path, route.file, route.docstring
     end
+
+Thanks
+------
+
+* Ryan Sobol for implementing *not\_found* documentation.
+* Loren Segal for making it seamlessly work as YARD plugin.
+  Well, and for YARD.
