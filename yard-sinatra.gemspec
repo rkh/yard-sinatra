@@ -3,7 +3,7 @@ SPEC = Gem::Specification.new do |s|
   # Get the facts.
   s.name             = "yard-sinatra"
   s.version          = "0.5.2"
-  s.description      = "Displays Sinatra routes (including comments) in YARD output (part of BigBand)."
+  s.description      = "Displays Sinatra routes (including comments) in YARD output."
 
   # External dependencies
   s.add_dependency "yard", "~> 0.7.0"

@@ -3,16 +3,10 @@ YARD::Sinatra
 
 This plugin adds [Sinatra](http://sinatrarb.com) routes to [YARD](http://yardoc.org/) output.
 
-BigBand
--------
-
-YARD::Sinatra is part of the [BigBand](http://github.com/rkh/big_band) stack.
-Check it out if you are looking for fancy Sinatra extensions.
-
 Usage
 -----
 
-Install via gemcutter:
+Install via rubygems:
 
     gem install yard-sinatra
 
