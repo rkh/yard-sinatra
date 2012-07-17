@@ -100,6 +100,7 @@ module YARD
         handles method_call(:get)
         handles method_call(:post)
         handles method_call(:put)
+        handles method_call(:patch)
         handles method_call(:delete)
         handles method_call(:head)
         handles method_call(:not_found)
@@ -117,7 +118,7 @@ module YARD
       module Legacy
         class RouteHandler < Ruby::Legacy::Base
           include AbstractRouteHandler
-          handles /\A(get|post|put|delete|head|not_found)[\s\(].*/m
+          handles /\A(get|post|put|patch|delete|head|not_found)[\s\(].*/m
 
           def http_verb
             statement.tokens.first.text.upcase
