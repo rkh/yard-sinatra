@@ -28,4 +28,14 @@ class ExampleApp < Sinatra::Base
   post("/settings") { }
   head("/settings") { }
 
+  namespace "/nested" do
+    # root
+    get do
+      "this is a route at the root of the namespace"
+    end
+
+    # nested route
+    get("/route") {"this is a nested route!"}
+  end
+
 end

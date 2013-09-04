@@ -37,6 +37,12 @@ module YARD
 
       # Logic both handlers have in common.
       module AbstractRouteHandler
+        def self.uri_prefix
+          uri_prefixes.join('')
+        end
+        def self.uri_prefixes
+          @prefixes ||= []
+        end
         def self.routes
           @routes ||= []
         end
@@ -47,11 +53,14 @@ module YARD
 
         def process
           case http_verb
+          when 'NAMESPACE'
+            AbstractRouteHandler.uri_prefixes << http_path(true)
+            parse_sinatra_namespace(:scope => :class, :namespace => namespace)
+            AbstractRouteHandler.uri_prefixes.pop
           when 'NOT_FOUND'
             register_error_handler(http_verb)
           else
             path = http_path
-            path = $1 if path =~ /^"(.*)"$/
             register_route(http_verb, path)
           end
         end
@@ -100,17 +109,22 @@ module YARD
         handles method_call(:get)
         handles method_call(:post)
         handles method_call(:put)
-        handles method_call(:patch)
         handles method_call(:delete)
         handles method_call(:head)
         handles method_call(:not_found)
+        handles method_call(:namespace)
 
         def http_verb
           statement.method_name(true).to_s.upcase
         end
 
-        def http_path
-          statement.parameters.first.source
+        def http_path(include_prefix=true)
+          path = statement.parameters.first
+          path = path ? path.last.last.source : ''
+          include_prefix ? AbstractRouteHandler.uri_prefix + path : path
+        end
+        def parse_sinatra_namespace(opts={})
+          parse_block(statement.last.last, opts)
         end
       end
 
@@ -118,14 +132,20 @@ module YARD
       module Legacy
         class RouteHandler < Ruby::Legacy::Base
           include AbstractRouteHandler
-          handles /\A(get|post|put|patch|delete|head|not_found)[\s\(].*/m
+          handles /\A(get|post|put|delete|head|not_found|namespace)[\s\(].*/m
 
           def http_verb
             statement.tokens.first.text.upcase
           end
 
-          def http_path
-            statement.tokens[2].text
+          def http_path(include_prefix=true)
+            path = statement.tokens.find {|t| t.class == YARD::Parser::Ruby::Legacy::RubyToken::TkSTRING }
+            path = path ? path.text : ''
+            path = $1 if path =~ /^["'](.+)["']/
+            include_prefix ? AbstractRouteHandler.uri_prefix + path : path
+          end
+          def parse_sinatra_namespace(opts={})
+            parse_block(opts)
           end
         end
       end

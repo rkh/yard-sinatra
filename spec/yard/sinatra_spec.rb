@@ -7,11 +7,13 @@ describe YARD::Sinatra do
   end
 
   it "reads sinatra routes" do
-    YARD::Sinatra.routes.size.should == 5
+    YARD::Sinatra.routes.size.should == 7
   end
 
   it "sets properties correctly" do
-    YARD::Sinatra.routes.each do |route|
+    settings_routes = YARD::Sinatra.routes.find_all {|r| r.http_path == "/settings" }
+    settings_routes.length.should == 5
+    settings_routes.each do |route|
       %w[GET HEAD POST PUT DELETE].should include(route.http_verb)
       route.http_path.should == "/settings"
       route.file.should =~ /example_app\.rb$/
@@ -28,6 +30,20 @@ describe YARD::Sinatra do
       %w[NOT_FOUND].should include(error_handler.http_verb)
       error_handler.file.should =~ /example_app\.rb$/
       error_handler.docstring.should =~ /Error 404 Page Not Found/ if error_handler.http_verb == "NOT_FOUND"
+    end
+  end
+
+  it "recognizes namespaced routes" do
+    nested_routes = YARD::Sinatra.routes.find_all {|r| r.http_path[0..6] == "/nested" }
+    nested_routes.length.should == 2
+    nested_routes.each do |route|
+      if route.http_path == "/nested"
+        route.docstring.should == "root"
+      elsif route.http_path == "/nested/route"
+        route.docstring.should == "nested route"
+      else
+          raise "unknown route: #{route.http_path}!"
+      end
     end
   end
 
