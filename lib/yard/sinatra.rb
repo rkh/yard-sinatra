@@ -54,14 +54,13 @@ module YARD
         def process
           case http_verb
           when 'NAMESPACE'
-            AbstractRouteHandler.uri_prefixes << http_path(true)
+            AbstractRouteHandler.uri_prefixes << http_path(false)
             parse_sinatra_namespace(:scope => :class, :namespace => namespace)
             AbstractRouteHandler.uri_prefixes.pop
           when 'NOT_FOUND'
             register_error_handler(http_verb)
           else
-            path = http_path
-            register_route(http_verb, path)
+            register_route(http_verb, http_path)
           end
         end
 
@@ -109,6 +108,7 @@ module YARD
         handles method_call(:get)
         handles method_call(:post)
         handles method_call(:put)
+        handles method_call(:patch)
         handles method_call(:delete)
         handles method_call(:head)
         handles method_call(:not_found)
@@ -120,7 +120,8 @@ module YARD
 
         def http_path(include_prefix=true)
           path = statement.parameters.first
-          path = path ? path.last.last.source : ''
+          path = path ? path.source : ''
+          path = $1 if path =~ /['"](.*)['"]/
           include_prefix ? AbstractRouteHandler.uri_prefix + path : path
         end
         def parse_sinatra_namespace(opts={})
@@ -132,7 +133,7 @@ module YARD
       module Legacy
         class RouteHandler < Ruby::Legacy::Base
           include AbstractRouteHandler
-          handles /\A(get|post|put|delete|head|not_found|namespace)[\s\(].*/m
+          handles /\A(get|post|put|patch|delete|head|not_found|namespace)[\s\(].*/m
 
           def http_verb
             statement.tokens.first.text.upcase
@@ -141,7 +142,7 @@ module YARD
           def http_path(include_prefix=true)
             path = statement.tokens.find {|t| t.class == YARD::Parser::Ruby::Legacy::RubyToken::TkSTRING }
             path = path ? path.text : ''
-            path = $1 if path =~ /^["'](.+)["']/
+            path = $1 if path =~ /^["'](.*)["']/
             include_prefix ? AbstractRouteHandler.uri_prefix + path : path
           end
           def parse_sinatra_namespace(opts={})

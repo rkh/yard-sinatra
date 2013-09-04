@@ -36,6 +36,11 @@ class ExampleApp < Sinatra::Base
 
     # nested route
     get("/route") {"this is a nested route!"}
+
+		namespace "/double" do
+			# double nested route
+			get("/route") { }
+		end
   end
 
 end

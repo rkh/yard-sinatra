@@ -7,7 +7,7 @@ describe YARD::Sinatra do
   end
 
   it "reads sinatra routes" do
-    YARD::Sinatra.routes.size.should == 7
+    YARD::Sinatra.routes.size.should == 8
   end
 
   it "sets properties correctly" do
@@ -35,10 +35,12 @@ describe YARD::Sinatra do
 
   it "recognizes namespaced routes" do
     nested_routes = YARD::Sinatra.routes.find_all {|r| r.http_path[0..6] == "/nested" }
-    nested_routes.length.should == 2
+    nested_routes.length.should == 3
     nested_routes.each do |route|
       if route.http_path == "/nested"
         route.docstring.should == "root"
+      elsif route.http_path == "/nested/double/route"
+        route.docstring.should == "double nested route"
       elsif route.http_path == "/nested/route"
         route.docstring.should == "nested route"
       else
