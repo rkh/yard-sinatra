@@ -26,6 +26,10 @@ module YARD
       def show_real_name?
         real_name and caller[1] =~ /`signature'/
       end
+
+      def type 
+        :method
+      end
     end
   end
 
