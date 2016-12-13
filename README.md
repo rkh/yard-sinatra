@@ -39,7 +39,7 @@ Add comments to your routes (well, that's optional):
     
     end
 
-The you're ready to go:
+Then you're ready to go:
 
     yardoc example_app.rb
 
