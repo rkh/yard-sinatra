@@ -43,7 +43,7 @@ The you're ready to go:
 
     yardoc example_app.rb
 
-YARD will automatically detect the yard-sinatra plugin and load it.
+Old versions of YARD (before 0.6.2) will automatically detect the yard-sinatra plugin and load it. In newer versions you must use the `--plugin yard-sinatra` parameter, or add it to a .yardopts file.
 
 Other use cases
 ---------------
