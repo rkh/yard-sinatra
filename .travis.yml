@@ -1,5 +1,12 @@
+install: bundle install
+before_script:
+  - sudo apt-get -y install tree
+  - tree ./vendor/bundle
+  - which bundle
+  - bundle config
+  - bundle env
+script: bundle exec rspec
 rvm:
-- 1.9.3
-- 2.0.0
-- jruby
-- ruby-head
+  - 2.4.2
+  - jruby-head
+  - ruby-head
