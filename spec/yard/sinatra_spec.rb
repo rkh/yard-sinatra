@@ -7,14 +7,14 @@ describe YARD::Sinatra do
   end
 
   it "reads sinatra routes" do
-    YARD::Sinatra.routes.size.should == 8
+    YARD::Sinatra.routes.size.should == 9
   end
 
   it "sets properties correctly" do
     settings_routes = YARD::Sinatra.routes.find_all {|r| r.http_path == "/settings" }
-    settings_routes.length.should == 5
+    settings_routes.length.should == 6
     settings_routes.each do |route|
-      %w[GET HEAD POST PUT DELETE].should include(route.http_verb)
+      %w[GET HEAD PATCH POST PUT DELETE].should include(route.http_verb)
       route.http_path.should == "/settings"
       route.file.should =~ /example_app\.rb$/
       route.docstring.should =~ /Displays a settings page for the current user/ if route.http_verb == "GET"
