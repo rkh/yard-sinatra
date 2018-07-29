@@ -1,4 +1,5 @@
 require "yard"
+require "mustermann"
 
 module YARD
 
@@ -29,6 +30,11 @@ module YARD
 
       def type 
         :method
+      end
+
+      def parameters
+        return [] if caller[1] =~ /`signature'/
+        @parameters
       end
     end
   end
@@ -72,18 +78,31 @@ module YARD
           # HACK: Removing some illegal letters.
           method_name = "" << verb << "_" << path.gsub(/[^\w_]/, "_")
           real_name   = "" << verb << " " << path
+
+          params = []
+          begin
+            pattern = Mustermann.new(path)
+            params = pattern.named_captures.keys.map{|v|[v]}
+          rescue Mustermann::ParseError => e
+            log.warn "Route parse error: #{e.message}" \
+            "\n        in `#{statement.file}':#{statement.line}"
+          end
+
           route = register CodeObjects::RouteObject.new(namespace, method_name, :instance) do |o|
             o.visibility = "public"
             o.source     = statement.source
             o.signature  = real_name
             o.explicit   = true
             o.scope      = scope
-            o.docstring  = statement.comments
             o.http_verb  = verb
             o.http_path  = path
             o.real_name  = real_name
+            o.parameters = params
             o.add_file(parser.file, statement.line)
+            o.docstring  = statement.comments
           end
+
+
           AbstractRouteHandler.routes << route
           yield(route) if block_given?
         end

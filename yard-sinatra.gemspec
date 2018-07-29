@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
 
   # External dependencies
   s.add_dependency "yard", "~> 0.7"
+  s.add_dependency "mustermann", ">= 1.0"
   s.add_development_dependency "rspec", "~> 2.6"
 
   # Those should be about the same in any BigBand extension.
