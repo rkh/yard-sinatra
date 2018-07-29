@@ -1,4 +1,5 @@
 require "yard"
+require "yard/handlers/ruby/dsl_handler_methods"
 
 module YARD
 
