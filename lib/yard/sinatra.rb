@@ -1,8 +1,15 @@
 require "yard"
+require "yard/handlers/ruby/dsl_handler_methods"
 
 module YARD
 
   module Sinatra
+    HANDLE_METHODS = %w(get post put patch delete head not_found namespace)
+
+    HANDLE_METHODS.each do |meth|
+      YARD::Handlers::Ruby::DSLHandlerMethods::IGNORE_METHODS[meth] = true
+    end
+
     def self.routes
       YARD::Handlers::Sinatra::AbstractRouteHandler.routes
     end
@@ -109,14 +116,7 @@ module YARD
       class RouteHandler < Ruby::Base
         include AbstractRouteHandler
 
-        handles method_call(:get)
-        handles method_call(:post)
-        handles method_call(:put)
-        handles method_call(:patch)
-        handles method_call(:delete)
-        handles method_call(:head)
-        handles method_call(:not_found)
-        handles method_call(:namespace)
+        YARD::Sinatra::HANDLE_METHODS.each { |meth| handles method_call(meth.to_sym) }
 
         def http_verb
           statement.method_name(true).to_s.upcase
@@ -137,7 +137,7 @@ module YARD
       module Legacy
         class RouteHandler < Ruby::Legacy::Base
           include AbstractRouteHandler
-          handles /\A(get|post|put|patch|delete|head|not_found|namespace)[\s\(].*/m
+          handles /\A(#{YARD::Sinatra::HANDLE_METHODS.join('|')})[\s\(].*/m
 
           def http_verb
             statement.tokens.first.text.upcase

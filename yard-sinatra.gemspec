@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.description      = "Displays Sinatra routes (including comments) in YARD output."
 
   # External dependencies
-  s.add_dependency "yard", "~> 0.7"
+  s.add_dependency "yard", ">= 0.8"
   s.add_development_dependency "rspec", "~> 2.6"
 
   # Those should be about the same in any BigBand extension.

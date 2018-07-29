@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     yard-sinatra (1.0.0)
-      yard (~> 0.7)
+      yard (>= 0.8)
 
 GEM
   remote: http://rubygems.org/
@@ -17,7 +17,7 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    yard (0.7.2)
+    yard (0.8.0)
 
 PLATFORMS
   ruby
