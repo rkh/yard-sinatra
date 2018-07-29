@@ -19,16 +19,12 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    yard (0.9.15)
+    yard (0.7.2)
 
 PLATFORMS
   ruby
-  x64-mingw32
 
 DEPENDENCIES
   rake
   rspec (~> 2.6)
   yard-sinatra!
-
-BUNDLED WITH
-   1.16.3
