@@ -117,6 +117,7 @@ module YARD
         handles method_call(:head)
         handles method_call(:not_found)
         handles method_call(:namespace)
+        handles method_call(:error)
 
         def http_verb
           statement.method_name(true).to_s.upcase
@@ -137,7 +138,7 @@ module YARD
       module Legacy
         class RouteHandler < Ruby::Legacy::Base
           include AbstractRouteHandler
-          handles /\A(get|post|put|patch|delete|head|not_found|namespace)[\s\(].*/m
+          handles /\A(get|post|put|patch|delete|head|not_found|namespace|error)[\s\(].*/m
 
           def http_verb
             statement.tokens.first.text.upcase
