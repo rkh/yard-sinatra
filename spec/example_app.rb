@@ -23,6 +23,7 @@ class ExampleApp < Sinatra::Base
     haml :'404'
   end
 
+  patch("/settings") { }
   put("/settings") { }
   delete("/settings") { }
   post("/settings") { }

@@ -1,5 +1,6 @@
+install: bundle install
+script: bundle exec rspec
 rvm:
-- 1.9.3
-- 2.0.0
-- jruby
-- ruby-head
+  - 2.4.2
+  - jruby-head
+  - ruby-head
