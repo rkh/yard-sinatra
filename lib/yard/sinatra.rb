@@ -3,6 +3,21 @@ require "yard"
 module YARD
 
   module Sinatra
+    # Plugin options
+    #
+    # Available options:
+    # * `enable-outside-sinatra-base`: Allow processing to happen even outside of
+    #   namespaces descending from Sinatra::Base
+    # * `enable-unknown-namespaces`: Allow processing with namespaced method
+    #   calls (e.g. SomeClass.get), even when those cannot be confirmed to
+    #   descend from Sinatra::Base
+    # * `enable-instance-methods`: Allow processing of calls made from within
+    #   instance methods.
+    # * `enable-all`: Do not limit processing at all
+    def self.options
+      @options ||= YARD::Config.options['yard-sinatra'] || {}
+    end
+
     def self.routes
       YARD::Handlers::Sinatra::AbstractRouteHandler.routes
     end
@@ -55,7 +70,36 @@ module YARD
           @error_handlers ||= []
         end
 
+        def options
+          YARD::Sinatra.options
+        end
+
+        def check_outside_sinatra_base_pass(ns = namespace)
+          return true if options['enable-outside-sinatra-base']
+          ns.inheritance_tree.map(&:to_s).include? 'Sinatra::Base'
+        end
+
+        def check_unknown_namespace_pass
+          return true if options['enable-unknown-namespaces'] ||
+                         statement.namespace.nil? ||
+                         statement.namespace.source == 'self'
+          ns = Registry.resolve(namespace, statement.namespace.source, true)
+          return false if ns.nil? # Could not resolve namespace
+          check_outside_sinatra_base_pass(ns)
+        end
+
+        def check_instance_method_pass
+          return true if options['enable-instance-methods']
+          !(owner.type == :method && owner.scope == :instance)
+        end
+
         def process
+          unless options['enable-all']
+            return unless check_outside_sinatra_base_pass
+            return unless check_unknown_namespace_pass
+            return unless check_instance_method_pass
+          end
+
           case http_verb
           when 'NAMESPACE'
             AbstractRouteHandler.uri_prefixes << http_path(false)
